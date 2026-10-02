@@ -9,7 +9,7 @@
 
 START_NAMESPACE_DISTRHO
 
-#define HV_DPF_NUM_PARAMETER 3
+#define HV_DPF_NUM_PARAMETER 4
 
 static void hvSendHookFunc(HeavyContextInterface *c, const char *sendName, uint32_t sendHash, const HvMessage *m);
 static void hvPrintHookFunc(HeavyContextInterface *c, const char *printLabel, const char *msgString, const HvMessage *m);
@@ -20,8 +20,9 @@ public:
   enum Parameters
   {
       paramEmphasis,
-      paramOffset,
       paramPedal,
+      paramToneSweep,
+      paramVolumeMin,
   };
 
 

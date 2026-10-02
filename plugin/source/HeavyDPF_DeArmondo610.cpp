@@ -77,10 +77,11 @@ HeavyDPF_DeArmondo610::HeavyDPF_DeArmondo610()
 {
   
   _parameters[0] = 1.0f;
-  _parameters[1] = 0.0f;
+  _parameters[1] = 1.0f;
   _parameters[2] = 1.0f;
+  _parameters[3] = 0.0f;
 
-  _context = hv_DeArmondo610_new_with_options(getSampleRate(), 10, 3, 2);
+  _context = hv_DeArmondo610_new_with_options(getSampleRate(), 10, 4, 2);
   _context->setUserData(this);
   _context->setSendHook(&hvSendHookFunc);
   _context->setPrintHook(&hvPrintHookFunc);
@@ -111,15 +112,6 @@ void HeavyDPF_DeArmondo610::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.def = 1.0f;
         break;
     
-      case paramOffset:
-        parameter.name = "Offset";
-        parameter.symbol = "offset";
-        parameter.hints = kParameterIsAutomatable;
-        parameter.ranges.min = 0.0f;
-        parameter.ranges.max = 1.0f;
-        parameter.ranges.def = 0.0f;
-        break;
-    
       case paramPedal:
         parameter.name = "Pedal";
         parameter.symbol = "pedal";
@@ -127,6 +119,25 @@ void HeavyDPF_DeArmondo610::initParameter(uint32_t index, Parameter& parameter)
         parameter.ranges.min = 0.0f;
         parameter.ranges.max = 1.0f;
         parameter.ranges.def = 1.0f;
+        break;
+    
+      case paramToneSweep:
+        parameter.name = "ToneSweep";
+        parameter.symbol = "tonesweep";
+        parameter.hints = kParameterIsAutomatable
+        | kParameterIsBoolean;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
+        parameter.ranges.def = 1.0f;
+        break;
+    
+      case paramVolumeMin:
+        parameter.name = "VolumeMin";
+        parameter.symbol = "volumemin";
+        parameter.hints = kParameterIsAutomatable;
+        parameter.ranges.min = 0.0f;
+        parameter.ranges.max = 1.0f;
+        parameter.ranges.def = 0.0f;
         break;
     }
   
@@ -153,14 +164,21 @@ void HeavyDPF_DeArmondo610::setParameterValue(uint32_t index, float value)
     
     case 1: {
       _context->sendFloatToReceiver(
-        Heavy_DeArmondo610::Parameter::In::OFFSET,
+        Heavy_DeArmondo610::Parameter::In::PEDAL,
         value);
       break;
     }
     
     case 2: {
       _context->sendFloatToReceiver(
-        Heavy_DeArmondo610::Parameter::In::PEDAL,
+        Heavy_DeArmondo610::Parameter::In::TONESWEEP,
+        value);
+      break;
+    }
+    
+    case 3: {
+      _context->sendFloatToReceiver(
+        Heavy_DeArmondo610::Parameter::In::VOLUMEMIN,
         value);
       break;
     }
@@ -284,7 +302,7 @@ void HeavyDPF_DeArmondo610::sampleRateChanged(double newSampleRate)
 {
   hv_DeArmondo610_free(_context);
 
-  _context = hv_DeArmondo610_new_with_options(getSampleRate(), 10, 3, 2);
+  _context = hv_DeArmondo610_new_with_options(getSampleRate(), 10, 4, 2);
   _context->setUserData(this);
   _context->setSendHook(&hvSendHookFunc);
   _context->setPrintHook(&hvPrintHookFunc);
